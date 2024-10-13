@@ -1,0 +1,43 @@
+import time
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from urllib.parse import urljoin
+
+# Initialize the Chrome WebDriver
+driver = webdriver.Chrome()
+
+# URL of the target webpage
+url = "https://www.carousell.com.hk/iphone/q/?searchId=GrsmLN"
+
+try:
+    print('----------')
+    # Load the webpage
+    driver.get(url)
+
+    # Loop through 36 elements on the page
+    for n in range(1, 37):
+        # Find the nth element on the page
+        page_element = driver.find_element(By.XPATH,f'//*[@id="main"]/div/div[1]/div/section[3]/div/div/div/div[1]/div[{n}]/div')
+        # Scroll the element into view
+        driver.execute_script("arguments[0].scrollIntoView({block: 'end'});", page_element)
+        # Get the text content of the element
+        page = page_element.text
+        # Print the element number and its text content
+        print(f'The current price of AAPL is: {n}, {page}')
+
+        # Wait for and find a link element with a specific class
+        link_element = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, '//a[contains(@class, "D_mL M_gE")]')))
+        # Get the href attribute of the link
+        href = link_element.get_attribute('href')
+        # Print the href (URL) of the link
+        print(href)
+
+except:
+    # If there's any error (e.g., URL not found), print an error message and exit
+    print('url not found')
+    exit()
+
+# Close the browser
+driver.quit()
